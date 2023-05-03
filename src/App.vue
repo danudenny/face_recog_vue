@@ -1,0 +1,89 @@
+<template>
+	<div>
+		<video ref="video" autoplay></video>
+		<div>
+			<span v-if="result === 'real'">Real</span>
+			<span v-if="result === 'spoof'">Spoof</span>
+		</div>
+		<div>
+			<button @click="startVideo">Start Video</button>
+			<button @click="stopVideo">Stop Video</button>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			result: null,
+			videoStream: null,
+			videoInterval: null,
+			apiUrl: import.meta.env.VITE_API_URL,
+		};
+	},
+	methods: {
+		startVideo() {
+			navigator.mediaDevices
+				.getUserMedia({ video: true, audio: false })
+				.then((stream) => {
+					this.$refs.video.srcObject = stream;
+					this.videoStream = stream;
+					this.videoInterval = setInterval(async () => {
+						await this.captureVideoFrame();
+					}, 3000); // change the interval as per your requirement
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		},
+		stopVideo() {
+			this.$refs.video.pause();
+			clearInterval(this.videoInterval);
+			fetch("/stop_stream", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ stop: true }),
+			})
+				.then((response) => {
+					console.log(response);
+					this.videoStream.getTracks().forEach((track) => {
+						track.stop();
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		},
+		async captureVideoFrame() {
+			const canvas = document.createElement("canvas");
+			const ctx = canvas.getContext("2d");
+			canvas.width = this.$refs.video.videoWidth;
+			canvas.height = this.$refs.video.videoHeight;
+			ctx.drawImage(this.$refs.video, 0, 0);
+			const base64ImageData = canvas.toDataURL("image/jpeg");
+			const bytes = Uint8Array.from(
+				atob(base64ImageData.split(",")[1]),
+				(c) => c.charCodeAt(0)
+			);
+			await fetch(this.apiUrl, {
+				method: "POST",
+				body: bytes,
+				headers: {
+					"Content-Type": "application/json",
+				},
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					this.result = data.label;
+					if (data.label == "real") {
+						this.stopVideo();
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		},
+	},
+};
+</script>
