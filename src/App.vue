@@ -2,11 +2,11 @@
 	<div>
 		<video v-show="isStartVideo" ref="video" autoplay></video>
 		<div>
-			<span v-if="result === 'real'">Real</span>
-			<span v-if="result === 'spoof'">Spoof</span>
-			<span v-else>No Face Detected</span>
+			<h3 class="text-success" v-if="result === 'real'">Real</h3>
+			<h3 class="text-danger" v-if="result === 'spoof'">Spoof</h3>
+			<h3 class="text-warning" v-else>No Face Detected</h3>
 		</div>
-		<div>
+		<div class="d-flex justify-content-start mx-3">
 			<button class="btn btn-primary" @click="startVideo">Start Video</button>
 			<button class="btn btn-danger" @click="stopVideo">Stop Video</button>
 		</div>
