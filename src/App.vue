@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<video ref="video" autoplay></video>
+		<video v-show="isStartVideo" ref="video" autoplay></video>
 		<div>
 			<span v-if="result === 'real'">Real</span>
 			<span v-if="result === 'spoof'">Spoof</span>
@@ -18,6 +18,7 @@ export default {
 	data() {
 		return {
 			result: null,
+			isStartVideo: false,
 			videoStream: null,
 			videoInterval: null,
 			apiProcessUrl: "https://apiface.danudenny.tech/process_video",
@@ -26,6 +27,7 @@ export default {
 	},
 	methods: {
 		startVideo() {
+			this.isStartVideo = true
 			navigator.mediaDevices
 				.getUserMedia({ video: true, audio: false })
 				.then((stream) => {
@@ -48,6 +50,7 @@ export default {
 				body: JSON.stringify({ stop: true }),
 			})
 				.then((response) => {
+					this.isStartVideo = false;
 					console.log(response);
 					this.videoStream.getTracks().forEach((track) => {
 						track.stop();
