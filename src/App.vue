@@ -19,7 +19,8 @@ export default {
 			result: null,
 			videoStream: null,
 			videoInterval: null,
-			apiUrl: import.meta.env.VITE_API_URL,
+			apiProcessUrl: "https://apiface.danudenny.tech/process_video",
+			apiStopUrl: "https://apiface.danudenny.tech/stop_stream",
 		};
 	},
 	methods: {
@@ -40,7 +41,7 @@ export default {
 		stopVideo() {
 			this.$refs.video.pause();
 			clearInterval(this.videoInterval);
-			fetch("/stop_stream", {
+			fetch(this.apiStopUrl, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ stop: true }),
@@ -66,7 +67,7 @@ export default {
 				atob(base64ImageData.split(",")[1]),
 				(c) => c.charCodeAt(0)
 			);
-			await fetch(this.apiUrl, {
+			await fetch(this.apiProcessUrl, {
 				method: "POST",
 				body: bytes,
 				headers: {
