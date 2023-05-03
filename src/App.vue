@@ -4,6 +4,7 @@
 		<div>
 			<span v-if="result === 'real'">Real</span>
 			<span v-if="result === 'spoof'">Spoof</span>
+			<span v-else>No Face Detected</span>
 		</div>
 		<div>
 			<button @click="startVideo">Start Video</button>
