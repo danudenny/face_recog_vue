@@ -7,8 +7,8 @@
 			<span v-else>No Face Detected</span>
 		</div>
 		<div>
-			<button @click="startVideo">Start Video</button>
-			<button @click="stopVideo">Stop Video</button>
+			<button class="btn btn-primary" @click="startVideo">Start Video</button>
+			<button class="btn btn-danger" @click="stopVideo">Stop Video</button>
 		</div>
 	</div>
 </template>
