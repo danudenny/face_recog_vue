@@ -1,14 +1,26 @@
 <template>
 	<div>
-		<video v-show="isStartVideo" ref="video" autoplay></video>
-		<div>
-			<h3 class="text-success" v-if="result === 'real'">Real</h3>
-			<h3 class="text-danger" v-if="result === 'spoof'">Spoof</h3>
-			<h3 class="text-warning" v-else>No Face Detected</h3>
-		</div>
-		<div class="d-flex justify-content-start mx-3">
-			<button class="btn btn-primary" @click="startVideo">Start Video</button>
-			<button class="btn btn-danger" @click="stopVideo">Stop Video</button>
+		<div class="row">
+			<div class="col-md-12">
+				<video ref="video" id="videoElement" autoplay></video>
+				<div>
+					<h3 class="text-success" v-if="result === 'real'">Real</h3>
+					<h3 class="text-danger" v-if="result === 'spoof'">Spoof</h3>
+					<h3
+						class="text-warning"
+						v-if="result === 'no_face_detected'">
+						No Face Detected
+					</h3>
+				</div>
+				<div class="d-flex justify-content-start">
+					<button class="btn btn-primary mr-2" @click="startVideo">
+						Start Video
+					</button>
+					<button class="btn btn-danger" @click="stopVideo">
+						Stop Video
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -27,7 +39,7 @@ export default {
 	},
 	methods: {
 		startVideo() {
-			this.isStartVideo = true
+			// this.isStartVideo = true;
 			navigator.mediaDevices
 				.getUserMedia({ video: true, audio: false })
 				.then((stream) => {
@@ -51,7 +63,6 @@ export default {
 			})
 				.then((response) => {
 					this.isStartVideo = false;
-					console.log(response);
 					this.videoStream.getTracks().forEach((track) => {
 						track.stop();
 					});
@@ -81,9 +92,9 @@ export default {
 				.then((response) => response.json())
 				.then((data) => {
 					this.result = data.label;
-					if (data.label == "real") {
-						this.stopVideo();
-					}
+					// if (data.label == "real") {
+					// 	this.stopVideo();
+					// }
 				})
 				.catch((error) => {
 					console.log(error);
@@ -92,3 +103,11 @@ export default {
 	},
 };
 </script>
+
+<style>
+#videoElement {
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg); /* Safari and Chrome */
+	-moz-transform: rotateY(180deg); /* Firefox */
+}
+</style>
