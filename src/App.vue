@@ -62,7 +62,6 @@ export default {
 				body: JSON.stringify({ stop: true }),
 			})
 				.then((response) => {
-					this.isStartVideo = false;
 					this.videoStream.getTracks().forEach((track) => {
 						track.stop();
 					});
@@ -92,9 +91,9 @@ export default {
 				.then((response) => response.json())
 				.then((data) => {
 					this.result = data.label;
-					// if (data.label == "real") {
-					// 	this.stopVideo();
-					// }
+					if (data.label == "real") {
+						this.stopVideo();
+					}
 				})
 				.catch((error) => {
 					console.log(error);
